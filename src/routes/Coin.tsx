@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
-import { Switch, Route, useLocation, useParams } from "react-router";
+import {
+  Switch,
+  Route,
+  useLocation,
+  useParams,
+  useRouteMatch,
+  Link,
+} from "react-router-dom";
 import styled from "styled-components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHouse } from "@fortawesome/free-solid-svg-icons";
 import Chart from "./Chart";
 import Price from "./Price";
 
@@ -9,21 +18,33 @@ const Container = styled.div`
   max-width: 480px;
   margin: 0 auto;
 `;
+
 const Header = styled.header`
+  max-width: 480px;
   height: 10vh;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
+
 const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
   font-size: x-large;
   font-weight: 600;
 `;
+
+const HomeBtn = styled.div`
+  position: absolute;
+  right: 50px;
+  padding: 0px;
+  margin-left: 30px;
+`;
+
 const Loader = styled.span`
   text-align: center;
   display: block;
 `;
+
 const Overview = styled.div`
   display: flex;
   justify-content: space-between;
@@ -31,6 +52,7 @@ const Overview = styled.div`
   padding: 15px 20px;
   border-radius: 10px;
 `;
+
 const OverviewItem = styled.div`
   display: flex;
   flex-direction: column;
@@ -42,8 +64,31 @@ const OverviewItem = styled.div`
     margin-bottom: 10px;
   }
 `;
+
 const Description = styled.p`
   margin: 20px 0px;
+`;
+
+const Tabs = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin: 25px 0px;
+  gap: 10px;
+`;
+
+const Tab = styled.span<{ isActive: boolean }>`
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 400;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 8px 0px;
+  border-radius: 10px;
+  color: ${(props) =>
+    props.isActive ? props.theme.accentColor : props.theme.textColor};
+  a {
+    display: block;
+  }
 `;
 
 interface RouteParams {
@@ -111,11 +156,13 @@ interface PriceData {
 }
 
 function Coin() {
-  const [loading, setLoading] = useState(true);
   const { coinId } = useParams<RouteParams>();
   const { state } = useLocation<RouteState>();
+  const [loading, setLoading] = useState(true);
   const [info, setInfo] = useState<InfoData>();
   const [priceInfo, setPriceInfo] = useState<PriceData>();
+  const priceMatch = useRouteMatch("/:coinId/price");
+  const chartMatch = useRouteMatch("/:coinId/chart");
   useEffect(() => {
     (async () => {
       const infoData = await (
@@ -131,12 +178,22 @@ function Coin() {
       setLoading(false);
     })();
   }, [coinId]);
+
   return (
     <Container>
       <Header>
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : info?.name}
         </Title>
+        <HomeBtn>
+          <Link
+            to={{
+              pathname: `/`,
+            }}
+          >
+            <FontAwesomeIcon icon={faHouse} />
+          </Link>
+        </HomeBtn>
       </Header>
       {loading ? (
         <Loader>Loading...</Loader>
@@ -167,6 +224,16 @@ function Coin() {
               <span>{priceInfo?.max_supply}</span>
             </OverviewItem>
           </Overview>
+
+          <Tabs>
+            <Tab isActive={chartMatch !== null}>
+              <Link to={`/:coinId/chart`}>Chart</Link>
+            </Tab>
+            <Tab isActive={priceMatch !== null}>
+              <Link to={`/:coinId/price`}>Price</Link>
+            </Tab>
+          </Tabs>
+
           <Switch>
             <Route path={`/${coinId}/price`}>
               <Price />
