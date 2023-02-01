@@ -1,8 +1,7 @@
-import { useQuery } from "react-query";
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
-import { fetchCoins } from "../api";
+import { useQuery } from 'react-query';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import { fetchCoins } from '../api';
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -65,7 +64,7 @@ interface ICoin {
 }
 
 function Coins() {
-  const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
+  const { isLoading, data } = useQuery<ICoin[]>('allCoins', fetchCoins);
 
   return (
     <Container>
@@ -84,9 +83,7 @@ function Coins() {
                   state: { name: coin.name },
                 }}
               >
-                <Img
-                  src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
-                />
+                <Img src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`} />
                 {coin.name} &rarr;
               </Link>
             </Coin>
