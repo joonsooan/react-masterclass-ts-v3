@@ -29,7 +29,15 @@
     "import/order": [
       "error",
       {
-        "groups": ["builtin", "external", "internal", ["parent", "type"], "sibling", "index", "object"]
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          ["parent", "type"],
+          "sibling",
+          "index",
+          "object"
+        ]
       }
     ]
   }
